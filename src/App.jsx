@@ -1,8 +1,19 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 function App() {
   const [weight, setWeight] = useState('')
   const [log, setLog] = useState([])
+
+  // LOAD saved data
+  useEffect(() => {
+    const saved = localStorage.getItem('fitness-log')
+    if (saved) setLog(JSON.parse(saved))
+  }, [])
+
+  // SAVE data whenever it changes
+  useEffect(() => {
+    localStorage.setItem('fitness-log', JSON.stringify(log))
+  }, [log])
 
   const addEntry = () => {
     if (!weight) return
