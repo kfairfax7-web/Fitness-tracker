@@ -575,7 +575,6 @@ function App() {
             />
           </div>
         )}
-{data.weekly.map((week, index) => (
         {tab === 'weekly' && (
           <>
             {data.weekly.map((week, index) => (
