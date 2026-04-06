@@ -62,6 +62,10 @@ const defaultState = {
     currentWeight: '260',
     goalWeight: '205',
     waterGoal: '128',
+    proteinGoal: '200',
+    carbGoal: '150',
+    fatGoal: '70',
+    calorieGoal: '2300',
   },
   selectedDay: 'Mon',
   daily: {
@@ -83,7 +87,7 @@ const defaultState = {
   })),
 }
 
-const STORAGE_KEY = 'fitness-tracker-full-v1'
+const STORAGE_KEY = 'fitness-tracker-full-v2'
 
 function App() {
   const [tab, setTab] = useState('dashboard')
@@ -354,7 +358,7 @@ function App() {
         <div style={styles.hero}>
           <h1 style={styles.title}>Fitness Tracker 💪</h1>
           <div style={styles.subtitle}>
-            8-week cut tracker • meals • habits • progress • weight
+            8-week cut tracker • meals • habits • progress • macros
           </div>
         </div>
 
@@ -398,7 +402,29 @@ function App() {
             </div>
 
             <div style={styles.card}>
-              <h2 style={styles.h2}>Profile</h2>
+              <h2 style={styles.h2}>Macro Goals</h2>
+              <div style={styles.grid2}>
+                <div style={styles.stat}>
+                  <div style={styles.statLabel}>Protein</div>
+                  <div style={styles.statValue}>{data.profile.proteinGoal}g</div>
+                </div>
+                <div style={styles.stat}>
+                  <div style={styles.statLabel}>Carbs</div>
+                  <div style={styles.statValue}>{data.profile.carbGoal}g</div>
+                </div>
+                <div style={styles.stat}>
+                  <div style={styles.statLabel}>Fat</div>
+                  <div style={styles.statValue}>{data.profile.fatGoal}g</div>
+                </div>
+                <div style={styles.stat}>
+                  <div style={styles.statLabel}>Calories</div>
+                  <div style={styles.statValue}>{data.profile.calorieGoal}</div>
+                </div>
+              </div>
+            </div>
+
+            <div style={styles.card}>
+              <h2 style={styles.h2}>Profile & Targets</h2>
               <label style={styles.label}>Current Weight</label>
               <input
                 style={styles.input}
@@ -418,6 +444,34 @@ function App() {
                 style={styles.input}
                 value={data.profile.waterGoal}
                 onChange={(e) => updateProfile('waterGoal', e.target.value)}
+              />
+
+              <label style={styles.label}>Protein Goal (g)</label>
+              <input
+                style={styles.input}
+                value={data.profile.proteinGoal}
+                onChange={(e) => updateProfile('proteinGoal', e.target.value)}
+              />
+
+              <label style={styles.label}>Carb Goal (g)</label>
+              <input
+                style={styles.input}
+                value={data.profile.carbGoal}
+                onChange={(e) => updateProfile('carbGoal', e.target.value)}
+              />
+
+              <label style={styles.label}>Fat Goal (g)</label>
+              <input
+                style={styles.input}
+                value={data.profile.fatGoal}
+                onChange={(e) => updateProfile('fatGoal', e.target.value)}
+              />
+
+              <label style={styles.label}>Calorie Goal</label>
+              <input
+                style={styles.input}
+                value={data.profile.calorieGoal}
+                onChange={(e) => updateProfile('calorieGoal', e.target.value)}
               />
             </div>
 
@@ -445,85 +499,81 @@ function App() {
         )}
 
         {tab === 'daily' && (
-          <>
-            <div style={styles.card}>
-              <h2 style={styles.h2}>Daily Check-In</h2>
+          <div style={styles.card}>
+            <h2 style={styles.h2}>Daily Check-In</h2>
 
-              <div style={styles.dayRow}>
-                {days.map((day) => (
-                  <button
-                    key={day}
-                    style={styles.dayButton(data.selectedDay === day)}
-                    onClick={() => setData((prev) => ({ ...prev, selectedDay: day }))}
-                  >
-                    {day}
-                  </button>
-                ))}
-              </div>
+            <div style={styles.dayRow}>
+              {days.map((day) => (
+                <button
+                  key={day}
+                  style={styles.dayButton(data.selectedDay === day)}
+                  onClick={() => setData((prev) => ({ ...prev, selectedDay: day }))}
+                >
+                  {day}
+                </button>
+              ))}
+            </div>
 
-              <label style={styles.label}>Weight</label>
+            <label style={styles.label}>Weight</label>
+            <input
+              style={styles.input}
+              value={selectedDayData.weight}
+              onChange={(e) => updateDailyField(data.selectedDay, 'weight', e.target.value)}
+              placeholder="Enter weight"
+            />
+
+            <label style={styles.label}>Water (oz)</label>
+            <input
+              style={styles.input}
+              value={selectedDayData.water}
+              onChange={(e) => updateDailyField(data.selectedDay, 'water', e.target.value)}
+              placeholder="128"
+            />
+
+            <div style={styles.checklistRow}>
+              <span>Hit protein</span>
               <input
-                style={styles.input}
-                value={selectedDayData.weight}
-                onChange={(e) => updateDailyField(data.selectedDay, 'weight', e.target.value)}
-                placeholder="Enter weight"
-              />
-
-              <label style={styles.label}>Water (oz)</label>
-              <input
-                style={styles.input}
-                value={selectedDayData.water}
-                onChange={(e) => updateDailyField(data.selectedDay, 'water', e.target.value)}
-                placeholder="128"
-              />
-
-              <div style={styles.checklistRow}>
-                <span>Hit protein</span>
-                <input
-                  type="checkbox"
-                  checked={selectedDayData.protein}
-                  onChange={(e) => updateDailyField(data.selectedDay, 'protein', e.target.checked)}
-                />
-              </div>
-
-              <div style={styles.checklistRow}>
-                <span>Carbs timed</span>
-                <input
-                  type="checkbox"
-                  checked={selectedDayData.carbsTimed}
-                  onChange={(e) =>
-                    updateDailyField(data.selectedDay, 'carbsTimed', e.target.checked)
-                  }
-                />
-              </div>
-
-              <div style={styles.checklistRow}>
-                <span>Workout done</span>
-                <input
-                  type="checkbox"
-                  checked={selectedDayData.workout}
-                  onChange={(e) => updateDailyField(data.selectedDay, 'workout', e.target.checked)}
-                />
-              </div>
-
-              <div style={styles.checklistRow}>
-                <span>Stayed on plan</span>
-                <input
-                  type="checkbox"
-                  checked={selectedDayData.onPlan}
-                  onChange={(e) => updateDailyField(data.selectedDay, 'onPlan', e.target.checked)}
-                />
-              </div>
-
-              <label style={styles.label}>Notes</label>
-              <textarea
-                style={styles.textarea}
-                value={selectedDayData.notes}
-                onChange={(e) => updateDailyField(data.selectedDay, 'notes', e.target.value)}
-                placeholder="Energy, cravings, hunger, workout notes..."
+                type="checkbox"
+                checked={selectedDayData.protein}
+                onChange={(e) => updateDailyField(data.selectedDay, 'protein', e.target.checked)}
               />
             </div>
-          </>
+
+            <div style={styles.checklistRow}>
+              <span>Carbs timed</span>
+              <input
+                type="checkbox"
+                checked={selectedDayData.carbsTimed}
+                onChange={(e) => updateDailyField(data.selectedDay, 'carbsTimed', e.target.checked)}
+              />
+            </div>
+
+            <div style={styles.checklistRow}>
+              <span>Workout done</span>
+              <input
+                type="checkbox"
+                checked={selectedDayData.workout}
+                onChange={(e) => updateDailyField(data.selectedDay, 'workout', e.target.checked)}
+              />
+            </div>
+
+            <div style={styles.checklistRow}>
+              <span>Stayed on plan</span>
+              <input
+                type="checkbox"
+                checked={selectedDayData.onPlan}
+                onChange={(e) => updateDailyField(data.selectedDay, 'onPlan', e.target.checked)}
+              />
+            </div>
+
+            <label style={styles.label}>Notes</label>
+            <textarea
+              style={styles.textarea}
+              value={selectedDayData.notes}
+              onChange={(e) => updateDailyField(data.selectedDay, 'notes', e.target.value)}
+              placeholder="Energy, cravings, hunger, workout notes..."
+            />
+          </div>
         )}
 
         {tab === 'weekly' && (
@@ -572,23 +622,21 @@ function App() {
         )}
 
         {tab === 'meals' && (
-          <>
-            <div style={styles.card}>
-              <h2 style={styles.h2}>7-Day Meal Plan</h2>
+          <div style={styles.card}>
+            <h2 style={styles.h2}>7-Day Meal Plan</h2>
 
-              {days.map((day) => (
-                <div key={day} style={styles.mealBox}>
-                  <strong>{day}</strong>
-                  <div style={{ marginTop: '8px' }}>
-                    <div><strong>Breakfast:</strong> {mealPlan[day].breakfast}</div>
-                    <div><strong>Lunch:</strong> {mealPlan[day].lunch}</div>
-                    <div><strong>Pre-workout:</strong> {mealPlan[day].preworkout}</div>
-                    <div><strong>Dinner:</strong> {mealPlan[day].dinner}</div>
-                  </div>
+            {days.map((day) => (
+              <div key={day} style={styles.mealBox}>
+                <strong>{day}</strong>
+                <div style={{ marginTop: '8px' }}>
+                  <div><strong>Breakfast:</strong> {mealPlan[day].breakfast}</div>
+                  <div><strong>Lunch:</strong> {mealPlan[day].lunch}</div>
+                  <div><strong>Pre-workout:</strong> {mealPlan[day].preworkout}</div>
+                  <div><strong>Dinner:</strong> {mealPlan[day].dinner}</div>
                 </div>
-              ))}
-            </div>
-          </>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>
