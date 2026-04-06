@@ -575,8 +575,51 @@ function App() {
             />
           </div>
         )}
+
         {tab === 'weekly' && (
           <>
+            <div style={styles.card}>
+              <h2 style={styles.h2}>Progress Charts 📊</h2>
+
+              {data.weekly.map((week, i) => {
+                const weight = Number(week.weight || 0)
+                const start = Number(data.profile.currentWeight || 260)
+                const goal = Number(data.profile.goalWeight || 205)
+
+                const totalLoss = start - goal
+                const currentLoss = start - weight
+                const percent =
+                  weight && totalLoss > 0
+                    ? Math.min(100, Math.max(0, (currentLoss / totalLoss) * 100))
+                    : 0
+
+                return (
+                  <div key={`chart-${i}`} style={{ marginBottom: 12 }}>
+                    <div style={{ fontSize: 14, marginBottom: 6 }}>
+                      Week {i + 1} — {weight ? `${weight} lb` : 'No data'}
+                    </div>
+
+                    <div
+                      style={{
+                        background: '#eee',
+                        borderRadius: 10,
+                        overflow: 'hidden',
+                        height: 10,
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: `${percent}%`,
+                          background: '#4CAF50',
+                          height: '100%',
+                        }}
+                      />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
             {data.weekly.map((week, index) => (
               <div style={styles.card} key={week.week}>
                 <h2 style={styles.h2}>Week {week.week}</h2>
